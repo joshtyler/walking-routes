@@ -1,10 +1,9 @@
 #["Example route name"] # This is the route name that will appear in the output kml
-#localgpx=true          # This means that the GPX file is in the local directory (missing is implicitly false)
 #osmapsroute="xxxx"     # This means that the GPX file comes from OS Maps. The value is the ID of the OS maps walk (Go to the walk in the browser, the xxx is the number from https://osmaps.ordnancesurvey.co.uk/route/xxx/yyyy)
 #description="foo"      # This is the description that will appear in the output KML file
+# (If no remote source is given the path source is assumed to be local)
 
 ["Guildford to Woking"]
-localgpx=true
 description="""
 A walk along the River Wey to Woking, then train home
 Done on one of my Fridays off!
@@ -12,3 +11,8 @@ Done on one of my Fridays off!
 
 [Gomshall]
 osmapsroute="7198843"
+
+[Ripley]
+description="""
+Mike power walk
+"""

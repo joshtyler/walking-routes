@@ -12,9 +12,6 @@ def sanitise_walk_args(args_dict):
     if not "description" in args_dict:
         args_dict["description"] = None
 
-    # If localgps was not provided, treat as false
-    if not "localgpx" in args_dict:
-        args_dict["localgpx"] = False
     return args_dict
 
 parser = argparse.ArgumentParser(description="Process TOML files of walks")

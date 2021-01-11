@@ -63,7 +63,11 @@ def process_kml_file(folder, file, name=None, description=None):
 		assert(len(paths) == 1)
 
 	for item in paths:
-		route_name = item.find("kml:name",ns).text
+		route_name = item.find("kml:name",ns)
+		if route_name == None:
+			route_name = "[Unnamed]"
+		else:
+			route_name = route_name.text
 		print("Found a route: %s" %(route_name), file=sys.stderr)
 
 		# Get the Placemark (the real data)
