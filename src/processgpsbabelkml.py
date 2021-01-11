@@ -64,11 +64,13 @@ def process_kml_file(folder, file, name=None, description=None):
 
 	for item in paths:
 		route_name = item.find("kml:name",ns).text
-		sys.stderr.write("Found a route: %s" %(route_name))
+		print("Found a route: %s" %(route_name), file=sys.stderr)
 
 		# Get the Placemark (the real data)
 		placemark = item.find("kml:Placemark",ns)
+
 		# Set the placemark name correctly
+		# Prefer to use the name given to us, but otherwise fall back to what is embedded in the file
 		placemark_name = placemark.find("kml:name",ns)
 		if name is not None:
 			route_name = name
@@ -82,7 +84,7 @@ def process_kml_file(folder, file, name=None, description=None):
 		# Remove style data that gpsbabel adds in
 		placemark.remove(placemark.find("kml:styleUrl",ns))
 
-		# Append the actual route data onto the output
+		# Append this to the output
 		folder.append(placemark)
 
 def print_output_file(root):
