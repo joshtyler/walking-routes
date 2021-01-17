@@ -1,0 +1,17 @@
+filetype="trig"
+datasource="CompleteTrigArchive.csv"
+
+include=[["Guildford", 51.2362, -0.5704, 10]]
+
+["Crooksbury Hill"]
+description="""
+Would have been good views if not for the weather.
+Trig has been converted to a monument by coating trig pillar with bricks.
+"""
+dates= [2021-01-16]
+
+["Fern Down"] # Mis-spelling is deliberate because this is how the OS database records it!
+description="""
+Quite hidden, hard to get to without GPS
+"""
+dates= [2020-09-23]

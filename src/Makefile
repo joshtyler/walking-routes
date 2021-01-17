@@ -1,3 +1,5 @@
+# Uncomment to keep intermediates for inspection
+.SECONDARY:
 
 # Inputs
 PATH_SRC_DIR=$(abspath ../data/path)

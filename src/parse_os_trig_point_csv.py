@@ -3,8 +3,9 @@
 import argparse
 import csv
 from dataclasses import dataclass
-from lxml import etree
+
 import geopy.distance
+import import collections.namedtuple
 
 # From https://webscraping.com/blog/Converting-UK-Easting-Northing-coordinates/
 from pyproj import Proj, transform
@@ -21,13 +22,15 @@ def ENtoLL84(easting, northing):
 	return transform(v36, v84, vlon36, vlat36)
 # End code from https://webscraping.com/blog/Converting-UK-Easting-Northing-coordinates/
 
+Coords = namedtuple("Coords", "lat long")
+
 @dataclass
 class Trig:
 	name: str
 	height : float
 	destroyed : bool
 	os_comment : str
-	coords: tuple
+	coords: Coords
 
 def process_csv(file):
 	trigs = []
@@ -36,26 +39,20 @@ def process_csv(file):
 		for row in reader:
 			if row['TYPE OF MARK'] == 'PILLAR':
 				longlat = ENtoLL84(row['EASTING'], row['NORTHING'])
+				coords = Coords(longlat[1], longlat[0])
 				destroyed = False
 				if row['DESTROYED MARK INDICATOR'] != '0':
 					destroyed = True
-				trigs.append(Trig(row['Trig Name'], row['HEIGHT'], destroyed, row['COMMENTS'], longlat))
+				trigs.append(Trig(row['Trig Name'], row['HEIGHT'], destroyed, row['COMMENTS'], coords))
 
 	return trigs
 
-# Annoyingly KML files have the default namespace set to this
-# This is a bit of a pain to parse in lxml, but oh well...
-kml_default_namespace="http://www.opengis.net/kml/2.2"
-ns = {"kml":kml_default_namespace}
-
 def write_kml(trigs):
 	# Create xml tree
-	root =  etree.Element("kml", nsmap={None: kml_default_namespace})
+	root = kml_writer.create_root()
 
 	# Add a folder
-	folder = etree.SubElement(root, "Folder")
-	name_element = etree.SubElement(folder,"name")
-	name_element.text = "Trigs"
+	folder = kml_writer.add_folder(root, "Trigs")
 
 	for trig in trigs:
 		mark = etree.SubElement(folder, "Placemark")
@@ -74,10 +71,12 @@ def write_kml(trigs):
 
 		point = etree.SubElement(mark, "Point")
 		coords = etree.SubElement(point, "coordinates")
-		coords.text = "%s,%s"%(trig.coords)
+		coords.text = "%s,%s"%(trig.coords.long, trig.coords.lat)
 
 	print(etree.tostring(root, pretty_print=True, encoding='unicode'))
 
+def distance_from_trig(coords):
+	geopy.distance.distance(geopy.distance.lonlat(t.coords[1],t.coords[0]), geopy.distance.lonlat(coords[1], coords[0]))
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser(description="Parse the OS trig point database")
@@ -85,5 +84,4 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 	trigs = process_csv(args.file)
 
-	trigs = [t for t in trigs if geopy.distance.distance(geopy.distance.lonlat(t.coords[0],t.coords[1]), geopy.distance.lonlat(-0.584897, 51.237755)).miles < 15]
 	write_kml(trigs)

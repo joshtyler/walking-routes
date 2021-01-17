@@ -7,11 +7,13 @@ import sys
 
 import processgpsbabelkml as kml
 
-def sanitise_walk_args(args_dict):
+def sanitise_section_args(args_dict):
     # If a description was provided use it, otherwise don't have this element
     if not "description" in args_dict:
         args_dict["description"] = None
 
+    if not "dates" in args_dict:
+        args_dict["dates"] = list()
     return args_dict
 
 parser = argparse.ArgumentParser(description="Process TOML files of walks")
@@ -21,22 +23,28 @@ args = parser.parse_args()
 output_root = kml.create_top_level_kml()
 
 for file in args.files:
-    config = toml.load(file)
+    t = toml.load(file)
 
     # Create a folder for the contents of this toml file
     # Use the filename for the KML folder (but with underscores replaced with spaces)
     folder = kml.add_folder_to_kml(output_root, Path(file).stem.replace("_", " "))
 
     # Process all walks in file
-    for name, args in config.items():
-        args = sanitise_walk_args(args)
+    for name, args in t.items():
+        args = sanitise_section_args(args)
 
-        # If the file is local, get it from the source directory
-        # otherwise the build process will have cached it for us
-        filename = "../gen/kml/"+name.replace(" ", "_")+".kml"
+        if t["filetype"] == "walk":
+            # If the file is local, get it from the source directory
+            # otherwise the build process will have cached it for us
+            filename = "../gen/kml/"+name.replace(" ", "_")+".kml"
 
-        # Add in the walk
-        kml.process_kml_file(folder, filename, name, args["description"])
+            # Add in the walk
+            kml.process_kml_file(folder, filename, name, args["description"])
+        elif t["filetype"] == "trig":
+            // DO THINGS
+            assert False
+        else:
+            assert False, "Unknown file type %s" %(t["filetype"])
 
 # Write the generated file to stdout
 kml.print_output_file(output_root)
