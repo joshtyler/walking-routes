@@ -61,7 +61,7 @@ Example:
 ``` toml
 filetype="trig"
 datasource="osdata.csv"
-include = [["Buckingham Palace" 51.5014, -0.1419, 100]]
+include = [["Buckingham Palace", 51.5014, -0.1419, 100]]
 ["Ben Nevis"]
 dates= 2000-01-01
 description="""
