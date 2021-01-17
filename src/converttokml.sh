@@ -31,4 +31,6 @@ for var in "$@"; do
 done
 
 
-gpsbabel ${INPUT_STR} -o kml,points=0 -F -
+# Merge gaps in input tracks
+# remove waypoints
+gpsbabel ${INPUT_STR} -x track,merge -o kml,points=0 -F -
