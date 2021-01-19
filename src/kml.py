@@ -33,7 +33,7 @@ def get_all_paths(node):
     return node.findall(".//kml:LineString",ns)
 
 def contains_path(node):
-    return get_all_paths(node) is not None
+    return len(get_all_paths(node)) > 0
 
 def get_coordinates_of_path(linestring):
     coordinates = linestring.find("./kml:coordinates",ns).text.split()
@@ -74,7 +74,7 @@ def add_folder(parent, name):
 def add_point(node, coord):
     point_node = etree.SubElement(node, "Point")
     coord_node = etree.SubElement(point_node, "coordinates")
-    coord_node.text = "%s,%s"%(coord.long, coord.lat)
+    coord_node.text = "%.6f,%.6f"%(coord.lon, coord.lat)
 
 def print_tree(root):
 	print(etree.tostring(root, pretty_print=True, encoding='unicode'))

@@ -32,7 +32,7 @@ PATH_SRC_FILES+=$(notdir $(CACHED_PATH_FILES))
 INTERMEDIATE_KML_FILES=$(addsuffix .kml, $(addprefix $(INTERMEDIATE_KML_DIR)/, $(basename $(PATH_SRC_FILES))))
 
 .PHONY: all
-all: $(PROCESSED_KML_OUT_FILES)
+all: $(PROCESSED_KML_OUT_FILES) $(GENERATED_DIR)/Merged.kml
 
 # Stage all the path files in one directory to make life easier
 define copy-to-merged =
@@ -58,6 +58,10 @@ $(INTERMEDIATE_KML_DIR)/%.kml : $(MERGED_PATH_DIR)/%.FIT
 # We have all the GPX files available
 $(GENERATED_DIR)/%.kml : $(TOML_SRC_DIR)/%.toml $(INTERMEDIATE_KML_FILES)
 	./processconfig.py $< > $@
+
+# Specific rule for the merged file
+$(GENERATED_DIR)/Merged.kml : $(TOML_SRC_FILES) $(INTERMEDIATE_KML_FILES)
+	./processconfig.py $(TOML_SRC_FILES)  > $@
 
 # Cleanup rules
 # Be hesitant to remove cached files, since these come from remote

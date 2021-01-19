@@ -2,7 +2,9 @@
 
 import argparse
 import csv
-from dataclasses import dataclass
+from dataclasses import dataclass,field
+
+from datetime import datetime
 
 import geopy.distance
 from collections import namedtuple
@@ -29,6 +31,9 @@ class Trig:
 	destroyed : bool
 	os_comment : str
 	coord: kml.Coord
+	visited : bool = False
+	user_comment : str = None
+	visit_dates : list = field(default_factory=list)
 
 def process_csv(file):
 	trigs = []
@@ -55,11 +60,19 @@ def add_trigs_to_tree(folder, trigs):
 			str = str + "\nMarked as destroyed."
 		if trig.os_comment and (not trig.os_comment.isspace()):
 			str = str + "\nOS Comment: %s" %(trig.os_comment)
+		if trig.user_comment and (not trig.user_comment.isspace()):
+			str = str + "\n%s" %(trig.user_comment)
+		if trig.visited:
+			str = str + "\nVisited"
+			for i in range(0, len(trig.visit_dates)):
+				if i == 0:
+					str = str + " on "
+				else:
+					str = str + ", "
+				str = str + trig.visit_dates[i].strftime("%Y-%d-%m")
 
 		kml.set_description(mark, str)
-		folder.append(mark)
-	return folder
-
+		kml.add_point(mark, trig.coord)
 
 def distance_from_trig(coords):
 	geopy.distance.distance(geopy.distance.lonlat(t.coord.lon,t.coord.lat), geopy.distance.lonlat(coord.lon, coord.lat))
@@ -72,5 +85,5 @@ if __name__ == "__main__":
 
 	root = kml.create_root()
 	folder = kml.add_folder(root, "Trigs")
-	folder = add_trigs_to_tree(folder, trigs)
+	add_trigs_to_tree(folder, trigs)
 	kml.print_tree(folder)

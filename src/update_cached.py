@@ -18,13 +18,14 @@ parser.add_argument('files', metavar='F', type=str, nargs='+', help='TOML file(s
 args = parser.parse_args()
 
 for file in args.files:
-    config = toml.load(file)
+    t = toml.load(file)
 
-    for name, dict in config.items():
-        if "osmapsroute" in dict:
-            output_filename = args.out_dir+"/"+name+".gpx"
-            print(output_filename)
-            if not (os.path.exists(output_filename)):
-                gpx_str = get_gpx(args.curl_file, dict["osmapsroute"])
-                f = open(output_filename, "w")
-                f.write(gpx_str)
+    if t["filetype"] == "walk":
+        for walk in t["walks"]:
+            if "osmapsroute" in walk:
+                output_filename = args.out_dir+"/"+walk["name"]+".gpx"
+                print(output_filename)
+                if not (os.path.exists(output_filename)):
+                    gpx_str = get_gpx(args.curl_file, walk["osmapsroute"])
+                    f = open(output_filename, "w")
+                    f.write(gpx_str)

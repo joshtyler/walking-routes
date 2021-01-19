@@ -27,26 +27,33 @@ output_root = kml.create_root()
 for file in args.files:
     t = toml.load(file)
 
-    # Create a folder for the contents of this toml file
-    # Use the filename for the KML folder (but with underscores replaced with spaces)
-    folder = kml.add_folder(output_root, Path(file).stem.replace("_", " "))
+    top_name = Path(file).stem.replace("_", " ") # Use the filename for the KML folder (but with underscores replaced with spaces)
 
-    # Process all walks in file
-    for name, args in t.items():
-        args = sanitise_section_args(args)
-
-        if t["filetype"] == "walk":
+    if t["filetype"] == "walk":
+        folder = kml.add_folder(output_root, top_name)
+        for walk in t["walks"]:
+            walk = sanitise_section_args(walk)
             # If the file is local, get it from the source directory
             # otherwise the build process will have cached it for us
-            filename = "../gen/kml/"+name.replace(" ", "_")+".kml"
+            filename = "../gen/kml/"+walk["name"].replace(" ", "_")+".kml"
+            gpsbabel_kml.append_gpsbabel_kml_paths_to_folder(folder, filename, walk["name"], walk["description"])
+    elif t["filetype"] == "trig":
+        trigdb = os_trigs.process_csv("../data/other/"+t["datasource"])
+        for trig in t["trigs"]:
+            # Find the corresponding trig in the database and update it
+            for i in range(0, len(trigdb)):
+                if trigdb[i].name == trig["name"]:
+                    trigdb[i].visited = True
+                    trigdb[i].user_comment = trig["description"]
+                    trigdb[i].visit_dates = trig["dates"]
+                    break
 
-            # Add in the walk
-            gpsbabel_kml.append_gpsbabel_kml_paths_to_folder(folder, filename, name, args["description"])
-        elif t["filetype"] == "trig":
-            trigs = os_trigs.process_csv(t["datasource"])
-           # Filter out based on distance and add to tree with metadata here
-        else:
-            assert False, "Unknown file type %s" %(t["filetype"])
+        visited_trigs = [t for t in trigdb if t.visited]
+        if len(visited_trigs) > 0:
+            folder = kml.add_folder(output_root, top_name+": Visited")
+            os_trigs.add_trigs_to_tree(folder, visited_trigs)
+    else:
+        assert False, "Unknown file type %s" %(t["filetype"])
 
 # Write the generated file to stdout
-kml.print_output_file(output_root)
+kml.print_tree(output_root)

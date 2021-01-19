@@ -1,15 +1,17 @@
 filetype="walk"
 
-["Guildford to Woking"]
+[[walks]]
+name="Guildford to Woking"
 description="""
 A walk along the River Wey to Woking, then train home
 Done on one of my Fridays off!
 """
-
-[Gomshall]
+[[walks]]
+name="Gomshall"
 osmapsroute="7198843"
 
-[Ripley]
+[[walks]]
+name="Ripley"
 description="""
 Mike power walk
 """

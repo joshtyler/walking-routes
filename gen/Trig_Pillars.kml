@@ -1,0 +1,16 @@
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Folder>
+    <name>Trig Pillars: Visited</name>
+    <Placemark>
+      <name>Fern Down</name>
+      <descripton>Height: 34.357
+Quite hidden, hard to get to without GPS
+
+Visited on 2020-23-09</descripton>
+      <Point>
+        <coordinates>-1.909907,50.798403</coordinates>
+      </Point>
+    </Placemark>
+  </Folder>
+</kml>
+
