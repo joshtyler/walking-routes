@@ -29,6 +29,7 @@ jobs:
       - name: Assemble files into output directory
         id: build
         run: |
+          pip install -r requirements.txt
           mkdir pages_output/
           cp index.html pages_output/
           ./trigs/trigs.py pages_output/trigs.json
