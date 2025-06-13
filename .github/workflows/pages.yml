@@ -26,24 +26,25 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      
       - name: Assemble files into output directory
         id: build
         run: |
           pip install -r requirements.txt
           mkdir pages_output/
           ./trigs/trigs.py pages_output/trigs.json
-
-      - name: Upload static files as artifact
-        id: deployment
-        uses: actions/upload-pages-artifact@v3 
-        with:
-          path: pages_output/
       
       - name: Build Jekyll site
         uses: actions/jekyll-build-pages@v1
         with:
           source: jekyll_site
           destination: ./pages_output
+
+      - name: Upload static files as artifact
+        id: deployment
+        uses: actions/upload-pages-artifact@v3 
+        with:
+          path: pages_output/
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
