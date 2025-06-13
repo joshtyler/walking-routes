@@ -22,7 +22,7 @@ def ENtoLL84(easting, northing):
 # End code from https://webscraping.com/blog/Converting-UK-Easting-Northing-coordinates/
 
 
-def process_csv():
+def get_trigs_geojson():
 	file = this_dir / "CompleteTrigArchive.csv"
 	trigs = []
 	with open(str(file), newline='') as f:
@@ -41,10 +41,13 @@ def process_csv():
 					trigs.append(geojson.Feature(geometry=coord))#,properties=properties))
 	return geojson.FeatureCollection(trigs)
 
+def trigs_geojson_to_file(filename):
+	with open(filename, "w") as f:
+		j = get_trigs_geojson()
+		geojson.dump(j,f)
+
 if __name__ == "__main__":
 	name = "test.json"
 	if len(sys.argv) >= 2:
 		name = sys.argv[1]
-	with open(name, "w") as f:
-		j = process_csv()
-		geojson.dump(j,f)
+	trigs_geojson_to_file(name)

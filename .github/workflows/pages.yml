@@ -27,12 +27,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       
-      - name: Assemble files into output directory
+      - name: Assemble files into jekyll assets directory
         id: build
         run: |
           pip install -r requirements.txt
-          mkdir pages_output/
-          ./trigs/trigs.py pages_output/trigs.json
+          make
       
       - name: Build Jekyll site
         uses: actions/jekyll-build-pages@v1
