@@ -1,0 +1,80 @@
+---
+layout: page
+---
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css">
+</head>
+<body>
+	<a href="/trigs.json">Click here to download trigs.json</a>
+
+	<h1>Table of Trigs</h1>
+
+	<table id="trigs_table" class="display">
+	</table>
+
+	<script
+	src="https://code.jquery.com/jquery-3.7.1.min.js"
+	integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+	crossorigin="anonymous">
+	</script>
+	<script src="https://cdn.datatables.net/2.3.2/js/dataTables.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
+
+	<script>
+		function render_table(data, userpos) {
+			cols = [
+					{ title: "Name" },
+					{ title: "Height (m)" },
+			]
+			userpos_turf = null
+			order_col = 0
+			
+			if(userpos)
+			{
+				userpos = turf.point(userpos)
+				cols.append({title : "Distance (km)"})
+				order_col = 2
+			}
+
+			const rows = data.map(point => {
+				ret = [point.properties.name, Number.parseFloat(point.properties.height).toFixed(1)]
+				if(userpos_turf)
+				{
+					const coordinates = turf.point(point.geometry.coordinates);
+					const dist = turf.distance(userpos_turf, coordinates, { units: 'kilometers' }).toFixed(2);
+					ret.append(dist)
+				}
+				return ret;
+			});
+	
+			$('#trigs_table').DataTable({
+				data: rows,
+				columns: cols,
+				order: [[order_col, 'asc']]
+			});
+		}
+	
+		$.getJSON('/autogen_assets/trigs.json', function(data) {
+			userpos = null
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(position => {
+					userpos = [position.coords.longitude, position.coords.latitude]
+				}, error => {
+					console.warn('Geolocation failed or denied:', error.message);
+				});
+			} else {
+				console.warn('Geolocation not supported');
+			}
+			render_table(data.features, userpos);
+
+		});
+		</script>
+
+
+</body>
+</html>
+	
+
+

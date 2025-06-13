@@ -5,4 +5,4 @@
 layout: home
 ---
 
-[Click here to download trigs.json](/autogen_assets/trigs.json)
+[Click here to see all the trig points](/trigs)

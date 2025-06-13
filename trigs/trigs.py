@@ -38,7 +38,7 @@ def get_trigs_geojson():
 					"os_comment" : row['COMMENTS'],
 				}
 				if not properties["destroyed"]:
-					trigs.append(geojson.Feature(geometry=coord))#,properties=properties))
+					trigs.append(geojson.Feature(geometry=coord,properties=properties))
 	return geojson.FeatureCollection(trigs)
 
 def trigs_geojson_to_file(filename):
