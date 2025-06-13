@@ -1,4 +1,4 @@
-name: Deploy  content to Pages
+name: Deploy content to Pages
 
 on:
   # Runs on pushes targeting the default branch
@@ -39,6 +39,13 @@ jobs:
         uses: actions/upload-pages-artifact@v3 
         with:
           path: pages_output/
+      
+      - name: Build Jekyll site
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: jekyll_site
+          destination: ./pages_output
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
