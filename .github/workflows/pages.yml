@@ -31,7 +31,6 @@ jobs:
         run: |
           pip install -r requirements.txt
           mkdir pages_output/
-          cp index.html pages_output/
           ./trigs/trigs.py pages_output/trigs.json
 
       - name: Upload static files as artifact
